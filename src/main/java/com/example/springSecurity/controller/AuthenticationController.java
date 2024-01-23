@@ -33,11 +33,14 @@ public class AuthenticationController {
             ApiRepositoryMesssage messsage;
             if (response.isStatus()){
             messsage=ApiRepositoryMesssage.builder().response(response).message("Login successfully..").status(true)
-                    .build();}else{
+                    .build();
+                return new ResponseEntity<>(messsage,HttpStatus.ACCEPTED);
+            }else{
                 messsage=ApiRepositoryMesssage.builder().message("Oops!! User not found...").status(false)
                         .build();
+                return new ResponseEntity<>(messsage,HttpStatus.BAD_REQUEST);
             }
-            return new ResponseEntity<>(messsage,HttpStatus.ACCEPTED);
+
         } catch (Exception e) {
             ApiRepositoryMesssage message=ApiRepositoryMesssage.builder().message("Oops!! User not found...").status(false)
                     .build();
