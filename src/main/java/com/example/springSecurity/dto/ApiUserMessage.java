@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 public class ApiUserMessage {
     private String message;
     private boolean status;
-    private User user;
+    private User response;
 }

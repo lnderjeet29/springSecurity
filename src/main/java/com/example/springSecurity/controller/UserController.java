@@ -22,13 +22,13 @@ public class UserController {
     private final JWTServices Jwt;
     private final UserServices userServices;
     Logger logger=  LoggerFactory.getLogger(UserController.class);
-    @GetMapping("/hello")
+    @GetMapping("/info")
     public ResponseEntity<ApiUserMessage> user(@RequestHeader(name = "Authorization") String token){
         logger.info(token);
         String username= null;
         try {
             username = Jwt.extractUserName(token.substring(7));
-            ApiUserMessage response=ApiUserMessage.builder().user(userServices.findUser(username)).message("user details").status(true).build();
+            ApiUserMessage response=ApiUserMessage.builder().response(userServices.findUser(username)).message("user details").status(true).build();
             return new ResponseEntity(response,HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();

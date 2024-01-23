@@ -18,7 +18,7 @@ public class AuthenticationController {
 
         try{
             User user=authentictionSerives.signup(signUpRequest);
-            ApiUserMessage message=ApiUserMessage.builder().user(user).message("user sign up successfully...").status(true).build();
+            ApiUserMessage message=ApiUserMessage.builder().response(user).message("user sign up successfully...").status(true).build();
             return new ResponseEntity<>(message,HttpStatus.ACCEPTED);
         }catch (Exception e){
             ApiUserMessage message=ApiUserMessage.builder().message("credential false...").status(false).build();
@@ -39,10 +39,9 @@ public class AuthenticationController {
             return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
         }
     }
-    @PostMapping("/refresh")
+    @GetMapping("/refresh")
     public ResponseEntity<ApiRepositoryMesssage> refresh(@RequestHeader(name = "Authorization") String Request){
-        RefreshToken request=new RefreshToken();
-        request.setToken(Request);
+
         try{
             JwtAuthicationResponse response= authentictionSerives.refreshToken(Request.substring(7));
             return new ResponseEntity<>(ApiRepositoryMesssage.builder().response(response).status(true).message("successful...")
