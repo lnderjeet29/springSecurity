@@ -7,6 +7,7 @@ import com.example.springSecurity.dto.SignUpRequest;
 import com.example.springSecurity.dto.SigninRequest;
 import com.example.springSecurity.entity.Role;
 import com.example.springSecurity.entity.User;
+import com.example.springSecurity.exception.BadApiRequest;
 import com.example.springSecurity.services.AuthentictionSerives;
 import com.example.springSecurity.services.JWTServices;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class AuthentictionSerivesImpl implements AuthentictionSerives {
     public JwtAuthicationResponse signin(SigninRequest signinRequest){
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getEmail(),
                 signinRequest.getPassword()));
-        var user=userRepository.findByEmail(signinRequest.getEmail()).orElseThrow(()->new IllegalArgumentException("Invalid email or password"));
+        var user=userRepository.findByEmail(signinRequest.getEmail()).orElseThrow(()->new BadApiRequest("Invalid email or password"));
         var jwt=jwtServices.generateToken(user);
         var refreshToken=jwtServices.generateRefreshToken(new HashMap<>(),user);
         JwtAuthicationResponse jwtAuthicationResponse=new JwtAuthicationResponse();
