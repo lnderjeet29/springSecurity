@@ -47,6 +47,7 @@ public class AuthentictionSerivesImpl implements AuthentictionSerives {
             var refreshToken=jwtServices.generateRefreshToken(new HashMap<>(),user);
             jwtAuthicationResponse = new JwtAuthicationResponse();
             jwtAuthicationResponse.setToken(jwt);
+            jwtAuthicationResponse.setEmail(user.email);
             jwtAuthicationResponse.setRefreshToken(refreshToken);
             jwtAuthicationResponse.setStatus(true);
         } catch (Exception e) {
@@ -62,6 +63,7 @@ public class AuthentictionSerivesImpl implements AuthentictionSerives {
             var jwt=jwtServices.generateToken(user);
             JwtAuthicationResponse jwtAuthicationResponse=new JwtAuthicationResponse();
             jwtAuthicationResponse.setToken(jwt);
+            jwtAuthicationResponse.setEmail(userEmail);
             jwtAuthicationResponse.setRefreshToken(refreshToken);
             return jwtAuthicationResponse;
         }
