@@ -29,7 +29,7 @@ public class AuthentictionSerivesImpl implements AuthentictionSerives {
         User user=new User();
         user.setEmail(signUpRequest.getEmail());
         user.setUserName(signUpRequest.getUsername());
-        user.setPhone_number("sonfesli");
+        user.setPhone_number("709839987");
         user.setRole(Role.USER);
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         return userRepository.save(user);
