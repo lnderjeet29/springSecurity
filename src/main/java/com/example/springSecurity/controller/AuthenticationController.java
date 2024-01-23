@@ -6,10 +6,7 @@ import com.example.springSecurity.services.AuthentictionSerives;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -17,9 +14,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
     private final AuthentictionSerives authentictionSerives;
     @PostMapping("/signup")
-    public ResponseEntity<User> signup(@RequestBody SignUpRequest signUpRequest){
-//        return ResponseEntity.ok(authentictionSerives.signup(signUpRequest));
-        return new ResponseEntity<User>(authentictionSerives.signup(signUpRequest), HttpStatus.ACCEPTED);
+    public ResponseEntity<ApiUserMessage> signup(@RequestBody SignUpRequest signUpRequest){
+
+        try{
+            User user=authentictionSerives.signup(signUpRequest);
+            ApiUserMessage message=ApiUserMessage.builder().user(user).message("user sign up successfully...").status(true).build();
+            return new ResponseEntity<>(message,HttpStatus.ACCEPTED);
+        }catch (Exception e){
+            ApiUserMessage message=ApiUserMessage.builder().message("credential false...").status(false).build();
+            return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
+        }
     }
     @PostMapping("/signin")
     public ResponseEntity<ApiRepositoryMesssage> signin(@RequestBody SigninRequest signinRequest){
@@ -36,7 +40,15 @@ public class AuthenticationController {
         }
     }
     @PostMapping("/refresh")
-    public ResponseEntity<JwtAuthicationResponse> refresh(@RequestBody RefreshToken Request){
-        return ResponseEntity.ok(authentictionSerives.refreshToken(Request));
+    public ResponseEntity<ApiRepositoryMesssage> refresh(@RequestHeader(name = "Authorization") String Request){
+        RefreshToken request=new RefreshToken();
+        request.setToken(Request);
+        try{
+            JwtAuthicationResponse response= authentictionSerives.refreshToken(Request.substring(7));
+            return new ResponseEntity<>(ApiRepositoryMesssage.builder().response(response).status(true).message("successful...")
+                    .build(),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(ApiRepositoryMesssage.builder().message("failed to generate token...").status(false).build(),HttpStatus.BAD_REQUEST);
+        }
     }
 }

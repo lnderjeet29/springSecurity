@@ -1,6 +1,8 @@
 package com.example.springSecurity.services.impl;
 
 import com.example.springSecurity.Repo.UserRepository;
+import com.example.springSecurity.entity.User;
+import com.example.springSecurity.exception.BadApiRequest;
 import com.example.springSecurity.services.UserServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,5 +23,9 @@ public class UserServicesImp implements UserServices {
                         .orElseThrow(()->new UsernameNotFoundException("user not found..."));
             }
         };
+    }
+    public User findUser(String username){
+        return userRepository.findByEmail(username)
+                .orElseThrow(()->new BadApiRequest("user not found..."));
     }
 }

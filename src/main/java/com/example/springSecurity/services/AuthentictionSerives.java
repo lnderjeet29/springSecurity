@@ -9,5 +9,5 @@ import com.example.springSecurity.entity.User;
 public interface AuthentictionSerives {
     public User signup(SignUpRequest signUpRequest);
     JwtAuthicationResponse signin(SigninRequest signinRequest);
-    JwtAuthicationResponse refreshToken(RefreshToken refreshToken);
+    JwtAuthicationResponse refreshToken(String refreshToken);
 }

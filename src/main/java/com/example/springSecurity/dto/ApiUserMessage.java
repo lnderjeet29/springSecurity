@@ -1,16 +1,17 @@
 package com.example.springSecurity.dto;
 
+import com.example.springSecurity.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ApiRepositoryMesssage {
+public class ApiUserMessage {
     private String message;
     private boolean status;
-    private JwtAuthicationResponse response;
+    private User user;
 }

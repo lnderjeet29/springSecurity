@@ -13,6 +13,7 @@ import com.example.springSecurity.services.JWTServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,24 +38,31 @@ public class AuthentictionSerivesImpl implements AuthentictionSerives {
     }
 
     public JwtAuthicationResponse signin(SigninRequest signinRequest){
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getEmail(),
-                signinRequest.getPassword()));
-        var user=userRepository.findByEmail(signinRequest.getEmail()).orElseThrow(()->new BadApiRequest("Invalid email or password"));
-        var jwt=jwtServices.generateToken(user);
-        var refreshToken=jwtServices.generateRefreshToken(new HashMap<>(),user);
-        JwtAuthicationResponse jwtAuthicationResponse=new JwtAuthicationResponse();
-        jwtAuthicationResponse.setToken(jwt);
-        jwtAuthicationResponse.setRefreshToken(refreshToken);
+        JwtAuthicationResponse jwtAuthicationResponse= null;
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getEmail(),
+                    signinRequest.getPassword()));
+            var user=userRepository.findByEmail(signinRequest.getEmail()).orElseThrow(()->new BadApiRequest("Invalid email or password"));
+            var jwt=jwtServices.generateToken(user);
+            var refreshToken=jwtServices.generateRefreshToken(new HashMap<>(),user);
+            jwtAuthicationResponse = new JwtAuthicationResponse();
+            jwtAuthicationResponse.setToken(jwt);
+            jwtAuthicationResponse.setRefreshToken(refreshToken);
+            jwtAuthicationResponse.setStatus(true);
+        } catch (Exception e) {
+            jwtAuthicationResponse = new JwtAuthicationResponse();
+            jwtAuthicationResponse.setStatus(false);
+        }
         return jwtAuthicationResponse;
     }
-    public JwtAuthicationResponse refreshToken(RefreshToken refreshToken){
-        String userEmail=jwtServices.extractUserName(refreshToken.getToken());
+    public JwtAuthicationResponse refreshToken(String refreshToken){
+        String userEmail=jwtServices.extractUserName(refreshToken);
         User user=userRepository.findByEmail(userEmail).orElseThrow();
-        if(jwtServices.isTokenValid(refreshToken.getToken(),user)){
+        if(jwtServices.isTokenValid(refreshToken,user)){
             var jwt=jwtServices.generateToken(user);
             JwtAuthicationResponse jwtAuthicationResponse=new JwtAuthicationResponse();
             jwtAuthicationResponse.setToken(jwt);
-            jwtAuthicationResponse.setRefreshToken(refreshToken.getToken());
+            jwtAuthicationResponse.setRefreshToken(refreshToken);
             return jwtAuthicationResponse;
         }
         return null;
